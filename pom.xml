@@ -29,7 +29,7 @@
     <groupId>org.wso2.carbon.identity.breach</groupId>
     <artifactId>identity-credential-breach-detection</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <name>WSO2 Identity Server - Credential Breach Detection</name>
     <description>Refuses passwords that already circulate in credential breaches.</description>
     <url>http://wso2.org</url>
@@ -38,7 +38,7 @@
         <url>https://github.com/wso2-extensions/identity-breached-credential-detection.git</url>
         <developerConnection>scm:git:https://github.com/wso2-extensions/identity-breached-credential-detection.git</developerConnection>
         <connection>scm:git:https://github.com/wso2-extensions/identity-breached-credential-detection.git</connection>
-        <tag>v1.0.0</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <modules>

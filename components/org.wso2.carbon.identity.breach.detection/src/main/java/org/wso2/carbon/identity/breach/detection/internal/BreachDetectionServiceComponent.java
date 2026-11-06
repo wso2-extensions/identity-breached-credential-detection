@@ -31,10 +31,12 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.wso2.carbon.identity.breach.detection.config.BreachDetectionConfig;
 import org.wso2.carbon.identity.breach.detection.engine.BreachEvaluationEngine;
+import org.wso2.carbon.identity.breach.detection.flow.BreachFlowInputValidator;
 import org.wso2.carbon.identity.breach.detection.listener.BreachDetectionListener;
 import org.wso2.carbon.identity.breach.detection.source.LocalBlocklistSource;
 import org.wso2.carbon.identity.breach.detection.spi.BreachSource;
 import org.wso2.carbon.identity.core.util.IdentityCoreInitializedEvent;
+import org.wso2.carbon.identity.flow.execution.engine.validation.FlowInputValidator;
 import org.wso2.carbon.user.core.listener.UserOperationEventListener;
 
 import java.util.ArrayList;
@@ -51,6 +53,10 @@ import java.util.List;
 public class BreachDetectionServiceComponent {
 
     private static final Log LOG = LogFactory.getLog(BreachDetectionServiceComponent.class);
+
+    // A literal, because the class is not there on products that predate the flow input validator contract.
+    private static final String FLOW_INPUT_VALIDATOR_CLASS =
+            "org.wso2.carbon.identity.flow.execution.engine.validation.FlowInputValidator";
 
     private final List<ServiceRegistration<?>> registrations = new ArrayList<>();
 
@@ -81,9 +87,35 @@ public class BreachDetectionServiceComponent {
         registrations.add(bundleContext.registerService(UserOperationEventListener.class,
                 new BreachDetectionListener(config), null));
 
+        // Checks a password when a flow step submits it, so the flow shows the error on that step instead of
+        // when the user is created at the end. Products without the flow input validator contract skip it.
+        boolean flowInputValidatorRegistered = false;
+        if (isFlowInputValidatorSupported()) {
+            // The contract types are resolved only when this line runs, so products without the contract never
+            // load them.
+            registrations.add(bundleContext.registerService(FlowInputValidator.class,
+                    new BreachFlowInputValidator(config.isEnabledAtDeployment()), null));
+            flowInputValidatorRegistered = true;
+        }
+
         LOG.info("Breached password detection started. Deployment switch: "
                 + (config.isEnabledAtDeployment() ? "on" : "off")
-                + ", listener order: " + config.getListenerOrder() + ".");
+                + ", listener order: " + config.getListenerOrder()
+                + ", flow input validator: " + (flowInputValidatorRegistered ? "registered" : "not supported")
+                + ".");
+    }
+
+    private static boolean isFlowInputValidatorSupported() {
+
+        // The contract package is imported optionally. The class cannot be loaded when the product does not export
+        // the package, or exports a version of it that predates the contract.
+        try {
+            Class.forName(FLOW_INPUT_VALIDATOR_CLASS, false,
+                    BreachDetectionServiceComponent.class.getClassLoader());
+            return true;
+        } catch (ClassNotFoundException | LinkageError e) {
+            return false;
+        }
     }
 
     private void configure(BreachSource source) {

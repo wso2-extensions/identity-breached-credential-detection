@@ -25,6 +25,7 @@
             <package name="org.wso2.carbon.identity.breach.detection.engine"/>
             <package name="org.wso2.carbon.identity.breach.detection.source"/>
             <package name="org.wso2.carbon.identity.breach.detection.config"/>
+            <package name="org.wso2.carbon.identity.breach.detection.flow"/>
         </packages>
     </test>
 </suite>

@@ -101,6 +101,34 @@
                 <artifactId>org.wso2.carbon.identity.governance</artifactId>
                 <version>${identity.governance.version}</version>
             </dependency>
+            <!--
+              The flow input validator contract. Only its classes are needed to compile, and the bundle imports
+              the packages optionally. The transitive tree is excluded because none of it is needed.
+            -->
+            <dependency>
+                <groupId>org.wso2.carbon.identity.framework</groupId>
+                <artifactId>org.wso2.carbon.identity.flow.execution.engine</artifactId>
+                <version>${carbon.identity.framework.version}</version>
+                <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>*</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.identity.framework</groupId>
+                <artifactId>org.wso2.carbon.identity.flow.mgt</artifactId>
+                <version>${carbon.identity.framework.version}</version>
+                <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>*</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
             <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.apache.felix.scr.ds-annotations</artifactId>
@@ -169,7 +197,8 @@
 
         <!-- Baseline platform: Identity Server 7.3.0. -->
         <carbon.kernel.version>4.12.34</carbon.kernel.version>
-        <carbon.identity.framework.version>7.10.156</carbon.identity.framework.version>
+        <!-- TODO: Use the carbon-identity-framework release that adds the flow input validator contract. -->
+        <carbon.identity.framework.version>7.11.257-SNAPSHOT</carbon.identity.framework.version>
         <identity.governance.version>1.15.9</identity.governance.version>
 
         <!--

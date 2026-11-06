@@ -65,6 +65,14 @@
             <artifactId>org.wso2.carbon.utils</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.wso2.carbon.identity.framework</groupId>
+            <artifactId>org.wso2.carbon.identity.flow.execution.engine</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.identity.framework</groupId>
+            <artifactId>org.wso2.carbon.identity.flow.mgt</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.scr.ds-annotations</artifactId>
         </dependency>
@@ -89,7 +97,8 @@
                             org.wso2.carbon.identity.breach.detection.listener,
                             org.wso2.carbon.identity.breach.detection.engine,
                             org.wso2.carbon.identity.breach.detection.source,
-                            org.wso2.carbon.identity.breach.detection.config
+                            org.wso2.carbon.identity.breach.detection.config,
+                            org.wso2.carbon.identity.breach.detection.flow
                         </Private-Package>
                         <!--
                           Three packages are exported. The spi and model packages are the contract a
@@ -118,6 +127,14 @@
                             org.wso2.carbon.identity.application.common.model;version="${carbon.identity.framework.imp.pkg.version.range}",
                             org.wso2.carbon.identity.governance;version="${identity.governance.imp.pkg.version.range}",
                             org.wso2.carbon.identity.governance.common;version="${identity.governance.imp.pkg.version.range}",
+                            <!--
+                              Optional, because some products do not export these packages. Products that export
+                              them but predate the flow input validator contract wire them without the contract
+                              class, so the service component checks for that class before it registers the
+                              validator.
+                            -->
+                            org.wso2.carbon.identity.flow.execution.engine.validation;version="${carbon.identity.framework.imp.pkg.version.range}";resolution:=optional,
+                            org.wso2.carbon.identity.flow.execution.engine.exception;version="${carbon.identity.framework.imp.pkg.version.range}";resolution:=optional,
                             *
                         </Import-Package>
                     </instructions>
